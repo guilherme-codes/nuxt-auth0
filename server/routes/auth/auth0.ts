@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
         response_type: 'code',
         client_id: clientId,
         redirect_uri: redirectURL,
-        scope: ['email'],
-        audience: [],
+        scope: 'openid offline_access email',
+        audience: '',
         max_age: 0,
         connection: '',
       }),
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const tokens = await $fetch(tokenURL, {
+    const tokens: { token_type: string, access_token: string } = await $fetch(tokenURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,9 +43,11 @@ export default defineEventHandler(async (event) => {
       }
     })
 
+    const data = { ...tokens } as any
+
     const res = await $fetch.raw('/api/auth', {
       method: 'POST',
-      body: tokens as any
+      body:  data
     })
 
     const cookies = res.headers.getSetCookie()

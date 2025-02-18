@@ -12,17 +12,17 @@ export default defineEventHandler(async (event) => {
   const session: any = await getIronSession(event.node.req, event.node.res, sessionOptions);
 
   if (event.method === 'POST') {
-    // Login
     const body = await readBody(event);
 
     session.credentials = {
       accessToken: body.access_token,
       expiresIn: body.expires_in,
+      idToken: body.id_token,
+      createdAt: Date.now(),
     }
 
 
     await session.save();
-
     return session.credentials
   }
 
@@ -34,6 +34,5 @@ export default defineEventHandler(async (event) => {
     session.destroy();
     return { success: true };
   }
-
 
 });
