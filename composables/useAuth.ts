@@ -6,23 +6,14 @@ export const useAuth = () => {
     session.value = data || null;
   };
 
-  const createSession = async (token: string, refresh_token: string) => {
+  const createSession = async () => {
     const session = await $fetch('/api/auth', {
       method: 'POST',
-      body: { token, refresh_token },
+      body: { token: '1', refresh_token: '2' },
     });
 
     session.value = session;
   };
-
-  const updateSession = async (data: any) => {
-    await $fetch('/api/auth', {
-      method: 'PATCH',
-      body: data,
-    });
-
-    await getSession();
-  }
 
   const deleteSession = async () => {
     await $fetch('/api/auth', {
@@ -32,5 +23,5 @@ export const useAuth = () => {
   };
 
   
-  return { session, createSession, getSession, updateSession, deleteSession };
+  return { session, createSession, getSession, deleteSession };
 };

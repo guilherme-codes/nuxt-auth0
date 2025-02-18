@@ -5,8 +5,12 @@ export default defineEventHandler(async (event) => {
     NUXT_OAUTH_AUTH0_REDIRECT_URL: redirectURL,
     NUXT_OAUTH_AUTH0_DOMAIN: domain,
     NUXT_OAUTH_AUTH0_CLIENT_ID: clientId,
+    NUXT_OAUTH_AUTH0_CLIENT_SECRET: clientSecret,
   } = process.env
+
   const authorizationURL = `https://${domain}/authorize`
+  const tokenURL = `https://${domain}/oauth/token`
+
   const query = getQuery<{ code?: string }>(event)
 
   if (!query.code) {
@@ -22,6 +26,39 @@ export default defineEventHandler(async (event) => {
         connection: '',
       }),
     )
+  }
+
+  try {
+    const tokens = await $fetch(tokenURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        client_secret: clientSecret,
+        code: query.code,
+        redirect_uri: redirectURL,
+      }
+    })
+
+    const res = await $fetch.raw('/api/auth', {
+      method: 'POST',
+      body: tokens as any
+    })
+
+    const cookies = res.headers.getSetCookie()
+
+    for (const cookie of cookies) {
+      appendResponseHeader(event, 'set-cookie', cookie)
+    }
+  
+
+    sendRedirect(event, '/')
+
+  } catch (error) {
+    console.log(error)
   }
 
 });
