@@ -43,11 +43,9 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    const data = { ...tokens } as any
-
     const res = await $fetch.raw('/api/auth', {
       method: 'POST',
-      body:  data
+      body:  tokens
     })
 
     const cookies = res.headers.getSetCookie()

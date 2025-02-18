@@ -18,16 +18,15 @@ export default defineEventHandler(async (event) => {
       accessToken: body.access_token,
       expiresIn: body.expires_in,
       idToken: body.id_token,
-      createdAt: Date.now(),
+      refreshToken: body.refresh_token,
     }
-
 
     await session.save();
     return session.credentials
   }
 
   if (event.method === 'GET') {
-    return session.credentials || {};
+    return session.credentials || null;
   }
 
   if (event.method === 'DELETE') {

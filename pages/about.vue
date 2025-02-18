@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { session, login, fetchUser, deleteSession } = useAuth();
+const { session, clearSession } = useUserSession();
 
 </script>
 
@@ -7,6 +7,6 @@ const { session, login, fetchUser, deleteSession } = useAuth();
   <div>
     <p v-if="session">Welcome, {{ session }}</p>
     
-    <button v-if="session" @click="deleteSession">Delete Session</button>
+    <button v-if="session" @click="clearSession">Logout</button>
   </div>
 </template>

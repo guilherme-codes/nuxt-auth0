@@ -1,13 +1,18 @@
 <script setup lang="ts">
-const { data: session } = await useFetch('/api/auth');
-const { createSession } = useAuth();
+const { session, clearSession, loggedIn } = await useUserSession();
 
+const router = useRouter()
+
+function  goToLogin() {
+  window.location.href = '/auth/auth0'
+}
 </script>
 
 <template>
   <div>
-    <p v-if="session">session: {{ session }}</p>
+    <p v-if="loggedIn">session: {{ session.refreshToken }}</p>
     <p v-else>no session</p>
-    <button @click="createSession">Create session</button>
+    <button @click="goToLogin">Login</button> <br><br>
+    <button @click="clearSession">Logout</button>
   </div>
 </template>
