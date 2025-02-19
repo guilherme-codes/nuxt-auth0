@@ -1,10 +1,20 @@
+import { appendResponseHeader } from 'h3'
+
 export const useUserSession = () => {
   const session = useState<any>('session', () => null);
+  const serverEvent = import.meta.server ? useRequestEvent() : null
 
   const clearSession = async () => {
-    await $fetch('/api/auth', {
+    const res = await $fetch.raw('/api/auth', {
       method: 'DELETE',
     });
+
+    const cookies = res.headers.getSetCookie()
+    if (import.meta.server && serverEvent) {
+      for (const cookie of cookies) {
+        appendResponseHeader(serverEvent, 'set-cookie', cookie)
+      }
+    }
 
     session.value = null;
   };

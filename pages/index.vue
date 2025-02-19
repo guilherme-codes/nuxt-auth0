@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { session, clearSession, loggedIn } = await useUserSession();
-
 const router = useRouter()
 
 function  goToLogin() {
